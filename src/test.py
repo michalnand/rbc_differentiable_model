@@ -1,6 +1,6 @@
 import model.rbc_model
 import micromodels.net_0.model
-import torch
+import torch 
 import numpy
 
 #torch.autograd.set_detect_anomaly(True)
@@ -31,13 +31,15 @@ rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Lo
 optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.01, weight_decay=10**-5)  
 
 loss_best = 100.0
-steps     = 10000
+steps     = 1000
 for step in range(steps):
     #initial state
     
     angle = list(numpy.random.rand(3)*2*3.141592654)
     angle[2] = 0
-    rbc.init(initial_angle = angle)
+
+    position = 0.1*(numpy.random.rand(3) - 0.5)*2.0
+    rbc.init(initial_position= position, initial_angle = angle)
 
     #perform some simulation steps
     for i in range(100):
