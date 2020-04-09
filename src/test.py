@@ -27,7 +27,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Loss, device)
 
-optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.001, weight_decay=10**-5)  
+optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.01)  
 
 loss_best = 100.0
 steps     = 1000
@@ -62,7 +62,7 @@ rbc.triangle_micromodel.load("micromodels/net_0/")
 
 
 rbc.init()
-for i in range(500):
+for i in range(128):
     rbc.forward(dt = 0.01)
 
 loss = rbc.get_loss()
