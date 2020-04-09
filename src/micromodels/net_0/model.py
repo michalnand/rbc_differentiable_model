@@ -8,10 +8,10 @@ class Flatten(nn.Module):
 
 class Create(torch.nn.Module):
 
-    def __init__(self, input_shape, outputs_count):
+    def __init__(self, input_shape, outputs_count, device):
         super(Create, self).__init__()
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device
 
         inputs_count = numpy.prod(numpy.array(input_shape))  
 
@@ -21,14 +21,13 @@ class Create(torch.nn.Module):
                         nn.ReLU(),
                         nn.Linear(32, outputs_count)
                     ]
-
         '''
         self.layers = [ 
                         Flatten(),
                         nn.Linear(inputs_count, outputs_count)
                     ]
         '''
-
+        
         for i in range(len(self.layers)):
             if hasattr(self.layers[i], "weight"):
                 torch.nn.init.xavier_uniform_(self.layers[i].weight)

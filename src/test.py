@@ -1,6 +1,7 @@
 import model.rbc_model
 import micromodels.net_0.model
 import torch
+import numpy
 
 #torch.autograd.set_detect_anomaly(True)
 
@@ -23,26 +24,47 @@ class Loss:
 
         return loss
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Loss, device)
+
+optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.01, weight_decay=10**-5)  
+
+loss_best = 100.0
+steps     = 10000
+for step in range(steps):
+    #initial state
+    
+    angle = list(numpy.random.rand(3)*2*3.141592654)
+    angle[2] = 0
+    rbc.init(initial_angle = angle)
+
+    #perform some simulation steps
+    for i in range(100):
+        rbc.forward(dt = 0.01)
+
+    #compute loss
+    loss = rbc.get_loss()
+
+    loss.backward()
+    optimizer.step()
+
+    print("step : ", step, ", loss = ", loss.detach().to("cpu").numpy())
+
+    if loss < loss_best:
+        loss_best = loss
+        rbc.triangle_micromodel.save("micromodels/net_0/")
+        print("saving new best model\n")
 
 
-rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Loss)
-
-optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.1, weight_decay=10**-5)  
-
-rbc.init()
-loss = 0
-for i in range(1):
-    loss+= rbc.forward(dt = 0.01)
-
-loss.backward()
-optimizer.step()
-
-print("loss = ", loss.detach().to("cpu").numpy())
+rbc.triangle_micromodel.load("micromodels/net_0/")
 
 '''
 rbc.init()
 for i in range(100):
     rbc.forward(dt = 0.01)
+
+loss = rbc.get_loss()
 
 rbc.mesh_model.plot()
 '''
