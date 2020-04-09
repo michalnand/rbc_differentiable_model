@@ -3,7 +3,6 @@ import micromodels.net_0.model
 import torch 
 import numpy
 
-#torch.autograd.set_detect_anomaly(True)
 
 class Loss:
 
@@ -58,10 +57,10 @@ for step in range(steps):
         rbc.triangle_micromodel.save("micromodels/net_0/")
         print("saving new best model\n")
 
-
+'''
 rbc.triangle_micromodel.load("micromodels/net_0/")
 
-'''
+
 rbc.init()
 for i in range(100):
     rbc.forward(dt = 0.01)
