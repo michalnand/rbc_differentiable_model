@@ -17,9 +17,9 @@ class MeshModel:
         self.points_count     = len(self.model.points)
         self.triangles_count  = len(self.model.polygons)
 
-        self.initial_position = torch.zeros((self.points_count, 3))
-        self.initial_velocity = torch.zeros((self.points_count, 3))
-        self.initial_force    = torch.zeros((self.points_count, 3))
+        self.initial_position = torch.zeros((self.points_count, 3)).to(self.device) 
+        self.initial_velocity = torch.zeros((self.points_count, 3)).to(self.device) 
+        self.initial_force    = torch.zeros((self.points_count, 3)).to(self.device) 
        
         for i in range(self.points_count):
             self.initial_position[i] = torch.from_numpy( self._rotate(self.model.points[i], initial_angle) + initial_position)
@@ -27,15 +27,10 @@ class MeshModel:
         for i in range(self.points_count):
             self.initial_velocity[i] = torch.from_numpy(numpy.array( self._rotate(initial_velocity, initial_angle) ))
 
-       
-        self.initial_position.to(self.device) 
-        self.initial_velocity.to(self.device)
-        self.initial_force.to(self.device) 
 
-
-        self.position = self.initial_position.clone()
-        self.velocity = self.initial_velocity.clone()
-        self.force    = self.initial_force.clone()
+        self.position = self.initial_position.clone().to(self.device) 
+        self.velocity = self.initial_velocity.clone().to(self.device) 
+        self.force    = self.initial_force.clone().to(self.device) 
 
 
         '''
