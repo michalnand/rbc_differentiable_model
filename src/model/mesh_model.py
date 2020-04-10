@@ -46,13 +46,14 @@ class MeshModel:
     def create_state(self):
         state_tensor = torch.zeros((self.triangles_count, 3, 3, 3), requires_grad=True).to(self.device)
 
+        center = self.center()
+
         #this is bottle neck - need to refactoring for faster run
         for j in range(self.triangles_count):
             p0_idx = self.model.polygons[j][0]
             p1_idx = self.model.polygons[j][1]
             p2_idx = self.model.polygons[j][2]
 
-            center = self.center()
             
             state_tensor[j][0][0] = self.position[p0_idx] - center
             state_tensor[j][0][1] = self.velocity[p0_idx]
