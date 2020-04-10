@@ -17,7 +17,7 @@ class Loss:
         volume      = mesh.volume()
 
 
-        loss_length   = 0.1*(self.initial_length - length)**2.0
+        loss_length   = length
         loss_surface  = (self.initial_surface - surface)**2.0
         loss_volume   = volume
 
