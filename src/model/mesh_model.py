@@ -80,15 +80,41 @@ class MeshModel:
 
         return self.position, self.velocity, self.force
                 
-    def plot(self):
+    def plot(self, file_name = None):
         fig = pyplot.figure()
         ax = Axes3D(fig)
 
         position = self.position.detach().to("cpu").numpy()
         position = numpy.transpose(position)
         ax.scatter(position[0], position[1], position[2])
+
+        '''
+        for j in range(self.triangles_count):
+            p0_idx = self.model.polygons[j][0]
+            p1_idx = self.model.polygons[j][1]
+            p2_idx = self.model.polygons[j][2]
+
+            ax_lines = Axes3D(fig)
+            x = [ self.model.points[p0_idx][0], self.model.points[p1_idx][0] ]
+            y = [ self.model.points[p0_idx][1], self.model.points[p1_idx][1] ]
+            z = [ self.model.points[p0_idx][2], self.model.points[p1_idx][2] ]
+            
+            ax_lines.plot3D(x, y, z) 
+
+            ax_lines.set_xlim([-1.0,1.0])
+            ax_lines.set_ylim([-1.0,1.0])
+            ax_lines.set_zlim([-1.0,1.0])
+        '''
+
+        ax.set_xlim([-1.0,1.0])
+        ax.set_ylim([-1.0,1.0])
+        ax.set_zlim([-1.0,1.0])
         
-        pyplot.show()
+        if file_name == None:
+            pyplot.show()
+        else:
+            pyplot.savefig(file_name)
+            pyplot.close()
 
     def center(self):
         result = torch.mean(self.position, dim = 0)
