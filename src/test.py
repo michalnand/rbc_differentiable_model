@@ -11,8 +11,6 @@ class Loss:
         self.initial_surface = mesh.surface().detach()
         self.initial_volume  = mesh.volume().detach()
 
-        print(self.initial_length, self.initial_surface, self.initial_volume)
-
     def forward(self, mesh):
         volume      = mesh.volume()
         length      = mesh.length()
@@ -45,7 +43,7 @@ for step in range(steps):
 
     #perform some simulation steps
     for i in range(128):
-        rbc.forward(dt = 0.01)
+        rbc.forward(dt = 0.1)
 
     #compute loss
     loss = rbc.get_loss()

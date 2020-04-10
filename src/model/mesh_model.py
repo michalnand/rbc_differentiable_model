@@ -51,16 +51,18 @@ class MeshModel:
             p0_idx = self.model.polygons[j][0]
             p1_idx = self.model.polygons[j][1]
             p2_idx = self.model.polygons[j][2]
+
+            center = self.center()
             
-            state_tensor[j][0][0] = self.position[p0_idx]
+            state_tensor[j][0][0] = self.position[p0_idx] - center
             state_tensor[j][0][1] = self.velocity[p0_idx]
             state_tensor[j][0][2] = self.force[p0_idx]
 
-            state_tensor[j][1][0] = self.position[p1_idx]
+            state_tensor[j][1][0] = self.position[p1_idx] - center
             state_tensor[j][1][1] = self.velocity[p1_idx]
             state_tensor[j][1][2] = self.force[p1_idx]
 
-            state_tensor[j][2][0] = self.position[p2_idx]
+            state_tensor[j][2][0] = self.position[p2_idx] - center
             state_tensor[j][2][1] = self.velocity[p2_idx]
             state_tensor[j][2][2] = self.force[p2_idx]
         
