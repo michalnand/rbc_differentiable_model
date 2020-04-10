@@ -15,21 +15,21 @@ class Create(torch.nn.Module):
 
         inputs_count = numpy.prod(numpy.array(input_shape))  
 
-        
+        '''
         self.layers = [ 
                         Flatten(),
                         nn.Linear(inputs_count, 32),
                         nn.ReLU(),
                         nn.Linear(32, outputs_count)
                     ]
-        
         '''
+        
         self.layers = [ 
                         Flatten(),
                         nn.Linear(inputs_count, outputs_count)
                     ]
-        '''
         
+
         for i in range(len(self.layers)):
             if hasattr(self.layers[i], "weight"):
                 torch.nn.init.xavier_uniform_(self.layers[i].weight)
