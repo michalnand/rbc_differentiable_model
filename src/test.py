@@ -17,8 +17,8 @@ class Loss:
         volume      = mesh.volume()
 
 
-        loss_length   = 0.1*((self.initial_length - length)**2.0)
-        loss_surface  = 0.5*(self.initial_surface - surface)**2.0
+        loss_length   = (self.initial_length - length)**2.0
+        loss_surface  = (self.initial_surface - surface)**2.0
         loss_volume   = (self.initial_volume*0.25 - volume)**2.0
 
 
@@ -34,6 +34,8 @@ rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Lo
 optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.01)  
 
 loss_best = 100.0
+loss_smooth = 100.0
+
 steps     = 10000
 for step in range(steps):
     #initial state
@@ -54,25 +56,24 @@ for step in range(steps):
     loss.backward()
     optimizer.step()
 
-    print("step : ", step, ", loss = ", loss.detach().to("cpu").numpy())
+    loss_np = loss.detach().to("cpu").numpy()
+    print("step : ", step, ", loss = ", loss_np)
 
-    if loss < loss_best:
-        loss_best = loss
+    loss_smooth = 0.9*loss_smooth + 0.1*loss_np
+    if loss_smooth < loss_best:
+        loss_best = loss_smooth
         rbc.triangle_micromodel.save("micromodels/net_0/")
         print("saving new best model\n")
 
-
 '''
-
 rbc.triangle_micromodel.load("micromodels/net_0/")
 rbc.triangle_micromodel.eval()
 
 rbc.init()
-for i in range(100):
+for i in range(256):
     rbc.forward(dt = 0.01)
 
     rbc.mesh_model.plot("images/step_" + str(i) + ".png")
 
 rbc.mesh_model.plot()
-
 '''
