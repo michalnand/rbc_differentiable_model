@@ -20,7 +20,7 @@ class Loss:
         - minimal volume
         - surface conservation
         '''
-        loss = volume + ((self.initial_surface - surface)**2.0) + 0.1*((self.initial_length - length)**2.0) 
+        loss = volume + 0.1*((self.initial_surface - surface)**2.0) + 0.01*((self.initial_length - length)**2.0) 
 
         print("VOLUME = ", volume)
         print("SURFACE = ", surface)
@@ -66,12 +66,13 @@ for step in range(steps):
 '''
 
 rbc.triangle_micromodel.load("micromodels/net_0/")
-
+rbc.triangle_micromodel.eval()
 
 rbc.init()
 for i in range(100):
     rbc.forward(dt = 0.01)
 
     rbc.mesh_model.plot("images/step_" + str(i) + ".png")
-    #rbc.mesh_model.plot()
+
+rbc.mesh_model.plot()
 '''
