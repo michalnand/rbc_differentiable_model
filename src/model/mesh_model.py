@@ -55,22 +55,22 @@ class MeshModel:
             p2_idx = self.model.polygons[j][2]
 
             
-            state_tensor[j][0][0] = self.position[p0_idx] - center
+            state_tensor[j][0][0] = self.position[p0_idx]
             state_tensor[j][0][1] = self.velocity[p0_idx]
             state_tensor[j][0][2] = self.force[p0_idx]
 
-            state_tensor[j][1][0] = self.position[p1_idx] - center
+            state_tensor[j][1][0] = self.position[p1_idx]
             state_tensor[j][1][1] = self.velocity[p1_idx]
             state_tensor[j][1][2] = self.force[p1_idx]
 
-            state_tensor[j][2][0] = self.position[p2_idx] - center
+            state_tensor[j][2][0] = self.position[p2_idx]
             state_tensor[j][2][1] = self.velocity[p2_idx]
             state_tensor[j][2][2] = self.force[p2_idx]
         
         return state_tensor.detach()
 
 
-    def update_state(self, force, dt = 0.01, position_clip = 10.0, velocity_clip = 10.0, force_clip = 10.0):
+    def update_state(self, force, dt = 0.01, position_clip = 1.5, velocity_clip = 1.5, force_clip = 1.5):
         force_ = self._group_forces(force)
         self.force = torch.clamp(force_, -force_clip, force_clip)
         
@@ -80,6 +80,8 @@ class MeshModel:
         '''
         self.velocity = torch.clamp(self.velocity + self.force*dt, -velocity_clip, velocity_clip)
         self.position = torch.clamp(self.position + self.velocity*dt, -position_clip, position_clip)
+
+        self.position = self.position - self.center()
 
         return self.position, self.velocity, self.force
                 
