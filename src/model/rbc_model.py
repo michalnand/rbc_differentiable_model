@@ -34,13 +34,6 @@ class RbcModel:
         '''
         self.mesh_model.update_state(d_state, dt)
 
-        '''
-        compute loss
-        '''
-        loss = self.loss.forward(self.mesh_model)
-
-        return loss
-
     def get_loss(self):
         return self.loss.forward(self.mesh_model)
 

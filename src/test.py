@@ -45,7 +45,7 @@ for step in range(steps):
     rbc.init(initial_position= position, initial_angle = angle)
 
     #perform some simulation steps
-    for i in range(32):
+    for i in range(256):
         rbc.forward(dt = 0.01)
 
     #compute loss
