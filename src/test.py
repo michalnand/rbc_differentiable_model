@@ -17,9 +17,9 @@ class Loss:
         volume      = mesh.volume()
 
 
-        loss_length   = (self.initial_length - length)**2.0
+        loss_length   = 0.1*(self.initial_length - length)**2.0
         loss_surface  = (self.initial_surface - surface)**2.0
-        loss_volume   = (self.initial_volume*0.25 - volume)**2.0
+        loss_volume   = volume
 
 
         loss = loss_length + loss_surface + loss_volume
@@ -29,7 +29,6 @@ class Loss:
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Loss, device)
-
 
 optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.01)  
 
@@ -66,6 +65,7 @@ for step in range(steps):
         print("saving new best model\n")
 
 '''
+
 rbc.triangle_micromodel.load("micromodels/net_0/")
 rbc.triangle_micromodel.eval()
 
@@ -76,4 +76,5 @@ for i in range(256):
     rbc.mesh_model.plot("images/step_" + str(i) + ".png")
 
 rbc.mesh_model.plot()
+
 '''
