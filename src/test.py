@@ -14,12 +14,16 @@ class Loss:
     def forward(self, mesh):
         volume      = mesh.volume()
         length      = mesh.length()
+        surface     = mesh.surface()
 
         '''
         - minimal volume
-        - length conservation
+        - surface conservation
         '''
-        loss = volume + ((self.initial_length - length)**2.0) 
+        loss = volume + ((self.initial_surface - surface)**2.0) 
+
+        print("VOLUME = ", volume)
+        print("SURFACE = ", surface)
 
         return loss
 
@@ -57,12 +61,15 @@ for step in range(steps):
         rbc.triangle_micromodel.save("micromodels/net_0/")
         print("saving new best model\n")
 
+
+'''
 rbc.triangle_micromodel.load("micromodels/net_0/")
 
 
 rbc.init()
-for i in range(32):
+for i in range(256):
     rbc.forward(dt = 0.01)
 
     rbc.mesh_model.plot("images/step_" + str(i) + ".png")
     #rbc.mesh_model.plot()
+'''

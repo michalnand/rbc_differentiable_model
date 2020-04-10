@@ -127,6 +127,16 @@ class MeshModel:
 
     def surface(self):
         s = torch.zeros(self.triangles_count).to(self.device)
+
+        for j in range(self.triangles_count):
+            p0_idx = self.model.polygons[j][0]
+            p1_idx = self.model.polygons[j][1]
+ 
+            a = self.position[p0_idx]
+            b = self.position[p1_idx]
+
+            s[j] = 0.5*torch.norm(torch.cross(a, b))
+
         return s.mean()
 
     def length(self):
