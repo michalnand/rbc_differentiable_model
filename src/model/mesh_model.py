@@ -40,30 +40,31 @@ class MeshModel:
         2 - state of point : position, velocity, force; (3)
         3 - point elements : x, y, z; (3)
         '''
-        self.state_tensor = torch.zeros((self.triangles_count, 3, 3, 3), requires_grad=True).to(self.device)
 
-        self.create_state()
+        self.state_tensor = self.create_state()
 
     def create_state(self):
+        state_tensor = torch.zeros((self.triangles_count, 3, 3, 3), requires_grad=True).to(self.device)
+
         #this is bottle neck - need to refactoring for faster run
         for j in range(self.triangles_count):
             p0_idx = self.model.polygons[j][0]
             p1_idx = self.model.polygons[j][1]
             p2_idx = self.model.polygons[j][2]
             
-            self.state_tensor[j][0][0] = self.position[p0_idx]
-            self.state_tensor[j][0][1] = self.velocity[p0_idx]
-            self.state_tensor[j][0][2] = self.force[p0_idx]
+            state_tensor[j][0][0] = self.position[p0_idx]
+            state_tensor[j][0][1] = self.velocity[p0_idx]
+            state_tensor[j][0][2] = self.force[p0_idx]
 
-            self.state_tensor[j][1][0] = self.position[p1_idx]
-            self.state_tensor[j][1][1] = self.velocity[p1_idx]
-            self.state_tensor[j][1][2] = self.force[p1_idx]
+            state_tensor[j][1][0] = self.position[p1_idx]
+            state_tensor[j][1][1] = self.velocity[p1_idx]
+            state_tensor[j][1][2] = self.force[p1_idx]
 
-            self.state_tensor[j][2][0] = self.position[p2_idx]
-            self.state_tensor[j][2][1] = self.velocity[p2_idx]
-            self.state_tensor[j][2][2] = self.force[p2_idx]
+            state_tensor[j][2][0] = self.position[p2_idx]
+            state_tensor[j][2][1] = self.velocity[p2_idx]
+            state_tensor[j][2][2] = self.force[p2_idx]
         
-        return self.state_tensor
+        return state_tensor.detach()
 
 
     def update_state(self, force, dt = 0.01, position_clip = 10.0, velocity_clip = 10.0, force_clip = 10.0):
@@ -104,6 +105,7 @@ class MeshModel:
 
     def length(self):
         result = torch.zeros(self.triangles_count).to(self.device)
+
         for j in range(self.triangles_count):
 
             p0_idx = self.model.polygons[j][0]
@@ -119,7 +121,6 @@ class MeshModel:
             ca = (c - a).clone()
            
             result[j] = (torch.norm(ab) + torch.norm(bc) + torch.norm(ca))/3.0
-
         return result.mean()
 
 
@@ -138,9 +139,9 @@ class MeshModel:
             p1_idx = self.model.polygons[j][1]
             p2_idx = self.model.polygons[j][2]
 
-            result[p0_idx]+= force[j]
-            result[p1_idx]+= force[j]
-            result[p2_idx]+= force[j]
+            result[p0_idx] = result[p0_idx] + force[j]
+            result[p1_idx] = result[p1_idx] + force[j]
+            result[p2_idx] = result[p2_idx] + force[j]
         
 
         return result

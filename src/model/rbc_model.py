@@ -22,12 +22,12 @@ class RbcModel:
         '''
         create state tensor, for each point to point interraction
         '''
-        state = self.mesh_model.state_tensor
+        state = self.mesh_model.create_state()
 
         '''
         apply model step, for each point
         '''
-        d_state = self.triangle_micromodel.forward(state.detach())
+        d_state = self.triangle_micromodel.forward(state)
 
         '''
         solve mesh diferential equations
