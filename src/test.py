@@ -30,7 +30,7 @@ rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Lo
 optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.01)  
 
 loss_best = 100.0
-steps     = 1000
+steps     = 10000
 for step in range(steps):
     #initial state
     
@@ -41,7 +41,7 @@ for step in range(steps):
     rbc.init(initial_position= position, initial_angle = angle)
 
     #perform some simulation steps
-    for i in range(256):
+    for i in range(32):
         rbc.forward(dt = 0.01)
 
     #compute loss
@@ -61,7 +61,7 @@ rbc.triangle_micromodel.load("micromodels/net_0/")
 
 
 rbc.init()
-for i in range(256):
+for i in range(32):
     rbc.forward(dt = 0.01)
 
     rbc.mesh_model.plot("images/step_" + str(i) + ".png")
