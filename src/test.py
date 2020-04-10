@@ -43,7 +43,7 @@ for step in range(steps):
 
     #perform some simulation steps
     for i in range(128):
-        rbc.forward(dt = 0.1)
+        rbc.forward(dt = 0.01)
 
     #compute loss
     loss = rbc.get_loss()
