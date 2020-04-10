@@ -19,7 +19,7 @@ class Loss:
 
         '''
         - minimal volume
-        - length maximize
+        - length conservation
         '''
         loss = volume + ((self.initial_length - length)**2.0) 
 
