@@ -28,14 +28,14 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Loss, device)
 
 
-optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.01)  
+optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.001)  
 
 loss_best = 100.0
 steps     = 1000
 for step in range(steps):
     #initial state
     
-    angle = list(numpy.random.rand(3)*2*3.141592654)
+    angle = 0.1*list(numpy.random.rand(3)*2*3.141592654)
     angle[2] = 0
 
     position = 0.1*(numpy.random.rand(3) - 0.5)*2.0
@@ -59,7 +59,7 @@ for step in range(steps):
         print("saving new best model\n")
 
 
-'''
+
 rbc.triangle_micromodel.load("micromodels/net_0/")
 
 
@@ -69,4 +69,3 @@ for i in range(128):
 
 loss = rbc.get_loss()
 rbc.mesh_model.plot()
-'''
