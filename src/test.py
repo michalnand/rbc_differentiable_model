@@ -12,25 +12,23 @@ class Loss:
         self.initial_volume  = mesh.volume().detach()
 
     def forward(self, mesh):
-        volume      = mesh.volume()
         length      = mesh.length()
         surface     = mesh.surface()
+        volume      = mesh.volume()
 
-        '''
-        - minimal volume
-        - surface conservation
-        '''
-        loss = volume + 0.1*((self.initial_surface - surface)**2.0) + 0.01*((self.initial_length - length)**2.0) 
 
-        print("VOLUME = ", volume)
-        print("SURFACE = ", surface)
+        loss_length   = 0.1*((self.initial_length - length)**2.0)
+        loss_surface  = (self.initial_surface - surface)**2.0
+        loss_volume   = (self.initial_volume*0.5 - volume)**2
+
+
+        loss = loss_length + loss_surface + loss_volume
 
         return loss
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Loss, device)
-
 
 optimizer  = torch.optim.Adam(rbc.triangle_micromodel.parameters(), lr= 0.01)  
 
@@ -75,4 +73,5 @@ for i in range(100):
     rbc.mesh_model.plot("images/step_" + str(i) + ".png")
 
 rbc.mesh_model.plot()
+
 '''

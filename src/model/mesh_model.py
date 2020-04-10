@@ -92,6 +92,7 @@ class MeshModel:
         position = self.position.detach().to("cpu").numpy()
         position = numpy.transpose(position)
 
+        position[2] = -position[2]
         ax.scatter(position[0], position[1], position[2])
 
             
