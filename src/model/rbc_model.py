@@ -22,7 +22,7 @@ class RbcModel:
         '''
         create state tensor, for each point to point interraction
         '''
-        state = self.mesh_model.create_state()
+        state = self.mesh_model.create_state(relative_state=True)
 
         '''
         apply model step, for each point

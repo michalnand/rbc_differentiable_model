@@ -41,12 +41,20 @@ class MeshModel:
         3 - point elements : x, y, z; (3)
         '''
 
-        self.state_tensor = self.create_state()
+        self.state_tensor = self.create_state(True)
 
-    def create_state(self):
+    def create_state(self, relative_state):
         state_tensor = torch.zeros((self.triangles_count, 3, 3, 3), requires_grad=True).to(self.device)
 
-        center = self.center()
+        self.center_position = self._center_position()
+        self.center_velocity = self._center_velocity()
+        self.center_force    = self._center_force()
+
+
+        if relative_state:
+            relative = 1.0
+        else:
+            relative = 0.0
 
         #this is bottle neck - need to refactoring for faster run
         for j in range(self.triangles_count):
@@ -55,17 +63,17 @@ class MeshModel:
             p2_idx = self.model.polygons[j][2]
 
             
-            state_tensor[j][0][0] = self.position[p0_idx]
-            state_tensor[j][0][1] = self.velocity[p0_idx]
-            state_tensor[j][0][2] = self.force[p0_idx]
+            state_tensor[j][0][0] = self.position[p0_idx] - relative*self.center_position
+            state_tensor[j][0][1] = self.velocity[p0_idx] - relative*self.center_velocity
+            state_tensor[j][0][2] = self.force[p0_idx]    - relative*self.center_force
 
-            state_tensor[j][1][0] = self.position[p1_idx]
-            state_tensor[j][1][1] = self.velocity[p1_idx]
-            state_tensor[j][1][2] = self.force[p1_idx]
+            state_tensor[j][1][0] = self.position[p1_idx] - relative*self.center_position
+            state_tensor[j][1][1] = self.velocity[p1_idx] - relative*self.center_velocity
+            state_tensor[j][1][2] = self.force[p1_idx]    - relative*self.center_force
 
-            state_tensor[j][2][0] = self.position[p2_idx]
-            state_tensor[j][2][1] = self.velocity[p2_idx]
-            state_tensor[j][2][2] = self.force[p2_idx]
+            state_tensor[j][2][0] = self.position[p2_idx] - relative*self.center_position
+            state_tensor[j][2][1] = self.velocity[p2_idx] - relative*self.center_velocity
+            state_tensor[j][2][2] = self.force[p2_idx]    - relative*self.center_force
         
         return state_tensor.detach()
 
@@ -80,8 +88,6 @@ class MeshModel:
         '''
         self.velocity = torch.clamp(self.velocity + self.force*dt, -velocity_clip, velocity_clip)
         self.position = torch.clamp(self.position + self.velocity*dt, -position_clip, position_clip)
-
-        self.position = self.position - self.center()
 
         return self.position, self.velocity, self.force
                 
@@ -121,12 +127,20 @@ class MeshModel:
             pyplot.savefig(file_name)
             pyplot.close()
 
-    def center(self):
+    def _center_position(self):
         result = torch.mean(self.position, dim = 0)
         return result
 
+    def _center_velocity(self):
+        result = torch.mean(self.velocity, dim = 0)
+        return result 
+
+    def _center_force(self):
+        result = torch.mean(self.force, dim = 0)
+        return result
+
     def volume(self):
-        center = self.center()
+        center = self._center_position()
         volume = torch.norm(self.position - center, dim = 1)**3
         return volume.mean()
 
@@ -164,6 +178,12 @@ class MeshModel:
             result[j] = (torch.norm(ab) + torch.norm(bc) + torch.norm(ca))/3.0
         return result.mean()
 
+    def curvature(self):
+        result = torch.zeros(self.triangles_count).to(self.device)
+
+        #TODO - compute curvature for each triangle
+
+        return result.mean()
 
 
 
