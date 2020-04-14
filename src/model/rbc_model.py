@@ -13,8 +13,8 @@ class RbcModel:
 
         self.init()
 
-    def init(self, initial_position = [0.0, 0.0, 0.0], initial_velocity = [0.0, 0.0, 0.0], initial_angle = [0.0, 0.0, 0.0]):
-        self.mesh_model.init(initial_position, initial_velocity, initial_angle)
+    def init(self, initial_position = [0.0, 0.0, 0.0], initial_velocity = [0.0, 0.0, 0.0], position_noise_level=0.0, velocity_noise_level=0.0):
+        self.mesh_model.init(initial_position, initial_velocity, position_noise_level=position_noise_level, velocity_noise_level=velocity_noise_level)
         self.loss.init(self.mesh_model)
 
     def forward(self, dt = 0.01):

@@ -13,19 +13,26 @@ class MeshModel:
 
         self.init()
 
-    def init(self, initial_position = [0.0, 0.0, 0.0], initial_velocity = [0.0, 0.0, 0.0], initial_angle = [0.0, 0.0, 0.0]):
+    def init(self, initial_position = [0.0, 0.0, 0.0], initial_velocity = [0.0, 0.0, 0.0], position_noise_level = 0.0, velocity_noise_level = 0.0):
         self.points_count     = len(self.model.points)
         self.triangles_count  = len(self.model.polygons)
 
         self.initial_position = torch.zeros((self.points_count, 3)).to(self.device) 
         self.initial_velocity = torch.zeros((self.points_count, 3)).to(self.device) 
         self.initial_force    = torch.zeros((self.points_count, 3)).to(self.device) 
+
        
         for i in range(self.points_count):
-            self.initial_position[i] = torch.from_numpy( self._rotate(self.model.points[i], initial_angle) + initial_position)
+            self.initial_position[i] = torch.from_numpy(self.model.points[i] + numpy.array(initial_position))
 
         for i in range(self.points_count):
-            self.initial_velocity[i] = torch.from_numpy(numpy.array( self._rotate(initial_velocity, initial_angle) ))
+            self.initial_velocity[i] = torch.from_numpy(numpy.array(initial_velocity))
+
+        position_noise_t = torch.randn((self.points_count, 3)).to(self.device)
+        velocity_noise_t = torch.randn((self.points_count, 3)).to(self.device)
+      
+        self.initial_position+= position_noise_level*position_noise_t
+        self.initial_velocity+= velocity_noise_level*velocity_noise_t
 
 
         self.position = self.initial_position.clone().to(self.device) 
@@ -182,10 +189,27 @@ class MeshModel:
     def curvature(self):
         result = torch.zeros(self.triangles_count).to(self.device)
 
+        #cell center, detach from gradient computation graph
+        center_point = self._center_position().detach()
+        
+
         #TODO - compute curvature for each triangle
         '''
         https://computergraphics.stackexchange.com/questions/1718/what-is-the-simplest-way-to-compute-principal-curvature-for-a-mesh-triangle
         '''
+        for j in range(self.triangles_count):
+            #indices to triagnles points
+            p0_idx = self.model.polygons[j][0]
+            p1_idx = self.model.polygons[j][1]
+            p2_idx = self.model.polygons[j][2]
+
+            #triangles points
+            a = self.position[p0_idx]
+            b = self.position[p1_idx]
+            c = self.position[p2_idx]
+
+
+            # !!!!! result[j] = MAGIC_FORMULA(a, b, c, center_point)
 
         return result.mean()
 

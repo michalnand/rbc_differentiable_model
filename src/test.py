@@ -4,7 +4,6 @@ import torch
 import numpy
 
 
-
 class Loss:
 
     def init(self, mesh):
@@ -17,14 +16,14 @@ class Loss:
         surface     = mesh.surface()
         volume      = mesh.volume()
 
-        loss_length   = (self.initial_length - length)**2.0
         loss_surface  = -surface
-        loss_volume   = volume 
+        loss_volume   = (self.initial_volume*0.25 - volume)**2.0
 
-        loss =  0.1*loss_volume + loss_surface + loss_length
-
+        loss =  loss_volume + loss_surface
         return loss
 
+
+        
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 rbc = model.rbc_model.RbcModel("objs/sphere_86.obj", micromodels.net_0.model, Loss, device)

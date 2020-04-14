@@ -16,11 +16,10 @@ class Loss:
         surface     = mesh.surface()
         volume      = mesh.volume()
 
-        loss_length   = (self.initial_length - length)**2.0
         loss_surface  = -surface
-        loss_volume   = volume 
+        loss_volume   = (self.initial_volume*0.25 - volume)**2.0
 
-        loss =  0.1*loss_volume + loss_surface
+        loss =  loss_volume + loss_surface
         return loss
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -35,12 +34,7 @@ loss_smooth = 100.0
 steps     = 1000
 for step in range(steps):
     #initial state
-    
-    angle    = numpy.random.rand(3)*2*3.141592654
-    angle[2] = 0
-
-    position = 0.1*(numpy.random.rand(3) - 0.5)*2.0
-    rbc.init(initial_position= position, initial_angle = angle)
+    rbc.init(position_noise_level = 0.1, velocity_noise_level = 0.01)
 
     #perform some simulation steps
     for i in range(128):
