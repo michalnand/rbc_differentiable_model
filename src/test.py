@@ -21,7 +21,7 @@ class Loss:
         loss_surface  = -surface
         loss_volume   = volume 
 
-        loss =  loss_volume + loss_surface + loss_length
+        loss =  0.1*loss_volume + loss_surface + loss_length
 
         return loss
 

@@ -98,10 +98,11 @@ class MeshModel:
         position = self.position.detach().to("cpu").numpy()
         position = numpy.transpose(position)
 
-        #position[0] = -position[0]
-        #position[2] = -position[2]
+        x = position[0]
+        y = position[1]
+        z = position[2]
 
-        ax.scatter(position[0], position[1], position[2])
+        ax.scatter(x, z, y)
 
             
         for j in range(self.triangles_count):
@@ -114,7 +115,7 @@ class MeshModel:
             y = [ position[1][p0_idx], position[1][p1_idx], position[1][p2_idx], position[1][p0_idx] ]
             z = [ position[2][p0_idx], position[2][p1_idx], position[2][p2_idx], position[2][p0_idx] ]
         
-            ax.plot3D(x, y, z, c = "black") 
+            ax.plot3D(x, z, y, c = "black") 
         
 
         ax.set_xlim([-1.0,1.0])
