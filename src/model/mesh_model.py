@@ -183,6 +183,9 @@ class MeshModel:
         result = torch.zeros(self.triangles_count).to(self.device)
 
         #TODO - compute curvature for each triangle
+        '''
+        https://computergraphics.stackexchange.com/questions/1718/what-is-the-simplest-way-to-compute-principal-curvature-for-a-mesh-triangle
+        '''
 
         return result.mean()
 
