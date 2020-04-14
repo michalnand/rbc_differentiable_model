@@ -20,7 +20,7 @@ class Loss:
         loss_surface  = -surface
         loss_volume   = volume 
 
-        loss =  loss_volume + loss_surface
+        loss =  loss_volume + loss_surface + loss_length
 
         return loss
 
@@ -44,7 +44,7 @@ for step in range(steps):
     rbc.init(initial_position= position, initial_angle = angle)
 
     #perform some simulation steps
-    for i in range(256):
+    for i in range(128):
         rbc.forward(dt = 0.01)
 
     #compute loss
